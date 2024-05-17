@@ -1,0 +1,38 @@
+name: Trigger Azure DevOps Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - pipeline-test
+  workflow_dispatch:
+
+jobs:
+  trigger-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up branch-specific variables
+      id: vars
+      run: |
+        if [[ "${GITHUB_REF##*/}" == "master" ]]; then
+          echo "::set-output name=PIPELINE_ID::your-main-pipeline-id"
+        elif [[ "${GITHUB_REF##*/}" == "develop" ]]; then
+          echo "::set-output name=PIPELINE_ID::your-develop-pipeline-id"
+        else
+          echo "::set-output name=PIPELINE_ID::unknown"
+      shell: bash
+
+    - name: Trigger Azure DevOps pipeline
+      if: steps.vars.outputs.PIPELINE_ID != 'unknown'
+      uses: Azure/pipelines@v1.2
+      with:
+        azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+        organization: your-azure-devops-org
+        project: your-azure-devops-project
+        pipeline-id: ${{ steps.vars.outputs.PIPELINE_ID }}
+        branch-name: ${{ github.ref_name }}
