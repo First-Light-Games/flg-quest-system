@@ -23,8 +23,11 @@ jobs:
           echo "::set-output name=PIPELINE_ID::your-main-pipeline-id"
         elif [[ "${GITHUB_REF##*/}" == "develop" ]]; then
           echo "::set-output name=PIPELINE_ID::your-develop-pipeline-id"
+        elif [[ "${GITHUB_REF##*/}" == "pipeline-test" ]]; then
+          echo "::set-output name=PIPELINE_ID::97"
         else
           echo "::set-output name=PIPELINE_ID::unknown"
+        fi
       shell: bash
 
     - name: Trigger Azure DevOps pipeline
@@ -32,7 +35,7 @@ jobs:
       uses: Azure/pipelines@v1.2
       with:
         azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
-        organization: your-azure-devops-org
-        project: your-azure-devops-project
+        organization: firstlightgames
+        project: blasthub
         pipeline-id: ${{ steps.vars.outputs.PIPELINE_ID }}
         branch-name: ${{ github.ref_name }}
