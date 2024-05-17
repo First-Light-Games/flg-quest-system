@@ -1,0 +1,2 @@
+﻿# DOMAIN
+pipeline trigger test
