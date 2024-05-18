@@ -13,6 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Print GitHub context
+      run: echo "${{ toJson(github) }}"
+
+    - name: Print environment variables
+      run: env
+
+    - name: Confirm Azure DevOps token length (should not print the actual token)
+      run: echo "${#${{ secrets.AZURE_DEVOPS_TOKEN }}}"
+    
     - name: Trigger Azure DevOps pipeline
       uses: Azure/pipelines@v1.2
       with:
