@@ -33,6 +33,6 @@ jobs:
     - name: Trigger Azure DevOps pipeline
       uses: Azure/pipelines@v1.2
       with:
-        azure-devops-project-url: 'https://dev.azure.com/firstlightgames/blasthub'
-        azure-pipeline-name: 'first-light.flgbackend' # name of the Azure pipeline to be triggered
-        azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
+        azure-devops-project-url: https://dev.azure.com/firstlightgames/blasthub
+        azure-pipeline-name: first-light.flgbackend # name of the Azure pipeline to be triggered
+        azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
