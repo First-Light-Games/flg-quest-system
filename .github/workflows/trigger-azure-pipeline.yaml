@@ -13,25 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up branch-specific variables
-      id: vars
-      run: |
-        BRANCH_NAME=${GITHUB_REF##*/}
-        echo "Branch name is $BRANCH_NAME"
-        if [[ "$BRANCH_NAME" == "main" ]]; then
-          echo "::set-output name=PIPELINE_ID::your-main-pipeline-id"
-        elif [[ "$BRANCH_NAME" == "develop" ]]; then
-          echo "::set-output name=PIPELINE_ID::your-develop-pipeline-id"
-        elif [[ "$BRANCH_NAME" == feature/* ]]; then
-          echo "::set-output name=PIPELINE_ID::your-feature-pipeline-id"
-        else
-          echo "::set-output name=PIPELINE_ID::unknown"
-        # Echo variables for debugging purposes
-        echo "GITHUB_REF: $GITHUB_REF"
-      shell: bash
+#    - name: Checkout repository
+#      uses: actions/checkout@v2
+#
+#    - name: Set up branch-specific variables
+#      id: vars
+#      run: |
+#        if [[ "${GITHUB_REF##*/}" == "master" ]]; then
+#          echo "::set-output name=PIPELINE_ID::your-main-pipeline-id"
+#        elif [[ "${GITHUB_REF##*/}" == "develop" ]]; then
+#          echo "::set-output name=PIPELINE_ID::your-develop-pipeline-id"
+#        elif [[ "${GITHUB_REF##*/}" == "pipeline-test" ]]; then
+#          echo "::set-output branchName=PIPELINE_ID::97"
+#        else
+#          echo "::set-output name=PIPELINE_ID::unknown"
+#        fi
+#      shell: bash
 
     - name: Trigger Azure DevOps pipeline
       uses: Azure/pipelines@v1.2
