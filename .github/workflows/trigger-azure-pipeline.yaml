@@ -23,7 +23,9 @@ jobs:
       run: env
 
     - name: Confirm Azure DevOps token length (should not print the actual token)
-      run: echo "${#${{ secrets.AZURE_DEVOPS_TOKEN }}}"
+      run: |
+        echo "Token length: ${#${{ secrets.AZURE_DEVOPS_TOKEN }}}"
+        echo "Token start: ${${{ secrets.AZURE_DEVOPS_TOKEN }}:0:4}****"
     
     - name: Trigger Azure DevOps pipeline
       uses: Azure/pipelines@v1.2
