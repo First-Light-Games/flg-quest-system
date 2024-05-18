@@ -31,8 +31,6 @@ jobs:
           echo "::set-output name=PIPELINE_ID::unknown"
         # Echo variables for debugging purposes
         echo "GITHUB_REF: $GITHUB_REF"
-        echo "GITHUB_SHA: $GITHUB_SHA"
-        echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
       shell: bash
 
     - name: Trigger Azure DevOps pipeline
