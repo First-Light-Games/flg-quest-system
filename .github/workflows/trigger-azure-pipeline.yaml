@@ -34,8 +34,6 @@ jobs:
       if: steps.vars.outputs.PIPELINE_ID != 'unknown'
       uses: Azure/pipelines@v1.2
       with:
-        azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
-        organization: firstlightgames
-        project: blasthub
-        pipeline-id: ${{ steps.vars.outputs.PIPELINE_ID }}
-        branch-name: ${{ github.ref_name }}
+        azure-devops-project-url: 'https://dev.azure.com/firstlightgames/blasthub'
+        azure-pipeline-name: 'first-light.flgbackend' # name of the Azure pipeline to be triggered
+        azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
