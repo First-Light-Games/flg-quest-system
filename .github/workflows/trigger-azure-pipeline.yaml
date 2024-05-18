@@ -31,7 +31,6 @@ jobs:
       shell: bash
 
     - name: Trigger Azure DevOps pipeline
-      if: steps.vars.outputs.PIPELINE_ID != 'unknown'
       uses: Azure/pipelines@v1.2
       with:
         azure-devops-project-url: 'https://dev.azure.com/firstlightgames/blasthub'
