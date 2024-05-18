@@ -19,15 +19,20 @@ jobs:
     - name: Set up branch-specific variables
       id: vars
       run: |
-        if [[ "${GITHUB_REF##*/}" == "master" ]]; then
+        BRANCH_NAME=${GITHUB_REF##*/}
+        echo "Branch name is $BRANCH_NAME"
+        if [[ "$BRANCH_NAME" == "main" ]]; then
           echo "::set-output name=PIPELINE_ID::your-main-pipeline-id"
-        elif [[ "${GITHUB_REF##*/}" == "develop" ]]; then
+        elif [[ "$BRANCH_NAME" == "develop" ]]; then
           echo "::set-output name=PIPELINE_ID::your-develop-pipeline-id"
-        elif [[ "${GITHUB_REF##*/}" == "pipeline-test" ]]; then
-          echo "::set-output name=PIPELINE_ID::97"
+        elif [[ "$BRANCH_NAME" == feature/* ]]; then
+          echo "::set-output name=PIPELINE_ID::your-feature-pipeline-id"
         else
           echo "::set-output name=PIPELINE_ID::unknown"
-        fi
+        # Echo variables for debugging purposes
+        echo "GITHUB_REF: $GITHUB_REF"
+        echo "GITHUB_SHA: $GITHUB_SHA"
+        echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
       shell: bash
 
     - name: Trigger Azure DevOps pipeline
