@@ -11,25 +11,26 @@ on:
 jobs:
   trigger-pipeline:
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Print GitHub context
-      run: echo "${{ toJson(github) }}"
-
-    - name: Print environment variables
-      run: env
-
-    - name: Confirm Azure DevOps token length (should not print the actual token)
-      run: |
-        echo "Token length: ${#${{ secrets.AZURE_DEVOPS_TOKEN }}}"
-        echo "Token start: ${${{ secrets.AZURE_DEVOPS_TOKEN }}:0:4}****"
     
-    - name: Trigger Azure DevOps pipeline
-      uses: Azure/pipelines@v1.2
-      with:
-        azure-devops-project-url: 'https://dev.azure.com/firstlightgames/blasthub'
-        azure-pipeline-name: 'first-light.flgbackend' # name of the Azure pipeline to be triggered
-        azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
+    env:
+      AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+      AZURE_DEVOPS_SOURCE_BRANCH: ${{ vars.AZURE_DEVOPS_SOURCE_BRANCH }}
+      AZURE_DEVOPS_PIPELINE_DEFINITION_ID: ${{ vars.AZURE_DEVOPS_PIPELINE_DEFINITION_ID }}
+      AZURE_DEVOPS_ORGANIZATION: ${{ vars.AZURE_DEVOPS_ORGANIZATION }}
+      AZURE_DEVOPS_PROJECT: ${{ vars.AZURE_DEVOPS_PROJECT }}
+    
+    steps:
+    - name: Trigger Azure Devops Pipeline
+      run: |
+        echo "Triggering Azure DevOps pipeline..."
+        curl -u :$AZURE_DEVOPS_TOKEN \
+             -X POST \
+             -H "Content-Type: application/json" \
+             -d '{
+                   "definition": {
+                     "id": $AZURE_DEVOPS_PIPELINE_DEFINITION_ID
+                   },
+                   "sourceBranch": "refs/heads/$AZURE_DEVOPS_SOURCE_BRANCH"
+                 }' \
+             https://dev.azure.com/$AZURE_DEVOPS_ORGANIZATION/$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0
+      shell: bash
