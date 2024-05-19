@@ -33,7 +33,7 @@ jobs:
                    "definition": {
                      "id": 97
                    },
-                   "sourceBranch": "feature\/quest_system_pipeline"
+                   "sourceBranch": "refs/heads/'"$AZURE_DEVOPS_SOURCE_BRANCH"'"
                  }' \
              https://dev.azure.com/$AZURE_DEVOPS_ORGANIZATION/$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0)
         echo "Response: $response"
