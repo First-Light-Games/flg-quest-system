@@ -31,7 +31,7 @@ jobs:
              -H "Content-Type: application/json" \
              -d '{
                    "definition": {
-                     "id": 97
+                     "id": $AZURE_DEVOPS_PIPELINE_DEFINITION_ID
                    },
                    "sourceBranch": "refs/heads/'"$AZURE_DEVOPS_SOURCE_BRANCH"'"
                  }' \
