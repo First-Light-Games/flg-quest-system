@@ -26,7 +26,7 @@ jobs:
       shell: bash
       run: |
         echo "Triggering Azure Devops Pipeline"
-        response=$(curl -u :faketoken \
+        response=$(curl -u :$AZURE_DEVOPS_TOKEN \
              -X POST \
              -H "Content-Type: application/json" \
              -d '{
