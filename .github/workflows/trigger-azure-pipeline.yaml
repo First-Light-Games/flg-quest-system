@@ -18,11 +18,32 @@ jobs:
       AZURE_DEVOPS_PIPELINE_DEFINITION_ID: ${{ vars.AZURE_DEVOPS_PIPELINE_DEFINITION_ID }}
       AZURE_DEVOPS_ORGANIZATION: ${{ vars.AZURE_DEVOPS_ORGANIZATION }}
       AZURE_DEVOPS_PROJECT: ${{ vars.AZURE_DEVOPS_PROJECT }}
+
+  
     
     steps:
-    - name: Trigger Azure Devops Pipeline
+    - name: Print curl command
       run: |
         echo "Triggering Azure DevOps pipeline..."
+        echo "AZURE_DEVOPS_SOURCE_BRANCH: $AZURE_DEVOPS_SOURCE_BRANCH"
+        echo "AZURE_DEVOPS_PIPELINE_DEFINITION_ID: $AZURE_DEVOPS_PIPELINE_DEFINITION_ID"
+        echo "AZURE_DEVOPS_ORGANIZATION: AZURE_DEVOPS_ORGANIZATION"
+        echo "AZURE_DEVOPS_PROJECT: AZURE_DEVOPS_PROJECT"
+        echo "=========================================================================================================="
+        echo "Generated curl command:"
+        echo "curl -u :$AZURE_DEVOPS_TOKEN \\"
+        echo "     -X POST \\"
+        echo "     -H \"Content-Type: application/json\" \\"
+        echo "     -d '{"
+        echo "           \"definition\": {"
+        echo "             \"id\": \"$AZURE_DEVOPS_PIPELINE_DEFINITION_ID\""
+        echo "           },"
+        echo "           \"sourceBranch\": \"refs/heads/$AZURE_DEVOPS_SOURCE_BRANCH\""
+        echo "         }' \\"
+        echo "     https://dev.azure.com/$AZURE_DEVOPS_ORGANIZATION/$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0"
+  
+    - name: Trigger Azure Devops Pipeline
+      run: |
         curl -u :$AZURE_DEVOPS_TOKEN \
              -X POST \
              -H "Content-Type: application/json" \
