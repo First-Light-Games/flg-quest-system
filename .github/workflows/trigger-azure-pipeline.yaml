@@ -35,5 +35,5 @@ jobs:
                    },
                    "sourceBranch": "feature_quest_chalmers"
                  }' \
-             https://dev.azure.com/firstlightgames/blasthub/_apis/build/builds?api-version=6.0)
+             https://dev.azure.com/$AZURE_DEVOPS_ORGANIZATION/$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0)
         echo "Response: $response"
