@@ -33,7 +33,7 @@ jobs:
                    "definition": {
                      "id": 97
                    },
-                   "sourceBranch": "feature/quest_chalmers"
+                   "sourceBranch": "feature_quest_chalmers"
                  }' \
              https://dev.azure.com/firstlightgames/blashub/_apis/build/builds?api-version=6.0)
         echo "Response: $response"
