@@ -25,7 +25,7 @@ jobs:
         shell: bash
         run: |
           echo "Triggering Azure DevOps pipeline..."
-          json_payload=$(jq -n --arg pipelineBranchName "$AZURE_DEVOPS_PIPELINE_SOURCE_BRANCH" --arg version "$GIT_SHA" \'{resources: {repositories: {self: {refName: $pipelineBranchName}}}}')
+          json_payload=$(jq -n --arg pipelineBranchName "$AZURE_DEVOPS_PIPELINE_SOURCE_BRANCH" --arg version "$GIT_SHA" '{resources: {repositories: {self: {refName: $pipelineBranchName}}}}')
           echo "Payload: $json_payload"
           curl -s -u :$AZURE_DEVOPS_TOKEN \
           -X POST \
