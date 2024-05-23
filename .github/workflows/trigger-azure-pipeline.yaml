@@ -46,7 +46,7 @@ jobs:
                -H "Content-Type: application/json" \
                -d '{
                      "definition": {
-                       "id": 97
+                       "id": $AZURE_DEVOPS_PIPELINE_DEFINITION_ID
                      },
                      "sourceBranch": "feature\/quest_system_pipeline"
                    }' \
