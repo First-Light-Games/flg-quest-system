@@ -26,7 +26,7 @@ jobs:
       shell: bash
       run: |
         echo "Triggering Azure Devops Pipeline"
-        $(curl -u :$AZURE_DEVOPS_TOKEN \
+        curl -u :$AZURE_DEVOPS_TOKEN \
              -X POST \
              -H "Content-Type: application/json" \
              -d '{
@@ -35,5 +35,5 @@ jobs:
                    },
                    "sourceBranch": "'"$AZURE_DEVOPS_SOURCE_BRANCH"'"
                  }' \
-             https://dev.azure.com/$AZURE_DEVOPS_ORGANIZATION/$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0)
+             https://dev.azure.com/$AZURE_DEVOPS_ORGANIZATION/$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0
         
