@@ -22,6 +22,21 @@ jobs:
   
     
     steps:
+    - name: Echo generated command
+      shell: bash
+      run: |
+        echo "Generated curl command:"
+        echo "curl -u :\$AZURE_DEVOPS_TOKEN \\"
+        echo "     -X POST \\"
+        echo "     -H \"Content-Type: application/json\" \\"
+        echo "     -d '{"
+        echo "           \"definition\": {"
+        echo "             \"id\": \$AZURE_DEVOPS_PIPELINE_DEFINITION_ID"
+        echo "           },"
+        echo "           \"sourceBranch\": \"refs/heads/\$AZURE_DEVOPS_SOURCE_BRANCH\""
+        echo "         }' \\"
+        echo "     https://dev.azure.com/\$AZURE_DEVOPS_ORGANIZATION/\$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0"
+
     - name: Trigger Azure Devops Pipeline
       shell: bash
       run: |
