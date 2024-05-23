@@ -30,7 +30,6 @@ jobs:
           curl -s -u :$AZURE_DEVOPS_TOKEN \
           -X POST \
           -H "Content-Type: application/json" \
-#          -d "$json_payload" \
           https://dev.azure.com/$AZURE_DEVOPS_ORGANIZATION/$AZURE_DEVOPS_PROJECT/_apis/pipelines/$AZURE_DEVOPS_PIPELINE_DEFINITION_ID/runs?api-version=6.0
     
 #    steps:
