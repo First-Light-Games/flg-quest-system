@@ -40,15 +40,17 @@ jobs:
     - name: Trigger Azure Devops Pipeline
       shell: bash
       run: |
-          echo "Triggering Azure Devops Pipeline"
-          response=$(curl -u :$AZURE_DEVOPS_TOKEN \
-               -X POST \
-               -H "Content-Type: application/json" \
-               -d '{
-                     "definition": {
-                       "id": $AZURE_DEVOPS_PIPELINE_DEFINITION_ID
-                     },
-                     "sourceBranch": "feature\/quest_system_pipeline"
-                   }' \
-               https://dev.azure.com/$AZURE_DEVOPS_ORGANIZATION/$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0)
-          echo "Response: $response"
+        echo "Triggering Azure DevOps pipeline..."
+        json_payload=$(jq -n --arg id "$AZURE_DEVOPS_PIPELINE_DEFINITION_ID" --arg branch "refs/heads/$AZURE_DEVOPS_SOURCE_BRANCH" '{definition: {id: $id}, sourceBranch: $branch}')
+       response=$(curl -s -u :$AZURE_DEVOPS_TOKEN \
+       -X POST \
+       -H "Content-Type: application/json" \
+       -d "$json_payload" \
+       https://dev.azure.com/$AZURE_DEVOPS_ORGANIZATION/$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0)
+       echo "Response: $response"
+       if echo "$response" | grep -q '"status": "queued"'; then
+                                                  echo "Pipeline triggered successfully."
+       else
+       echo "Failed to trigger pipeline."
+       exit 1
+       fi
