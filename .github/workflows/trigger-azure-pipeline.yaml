@@ -14,34 +14,21 @@ jobs:
     
     env:
       AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
-      AZURE_DEVOPS_SOURCE_BRANCH: ${{ vars.AZURE_DEVOPS_SOURCE_BRANCH }}
+      AZURE_DEVOPS_PIPELINE_SOURCE_BRANCH: ${{ vars.AZURE_DEVOPS_SOURCE_BRANCH }}
       AZURE_DEVOPS_PIPELINE_DEFINITION_ID: ${{ vars.AZURE_DEVOPS_PIPELINE_DEFINITION_ID }}
       AZURE_DEVOPS_ORGANIZATION: ${{ vars.AZURE_DEVOPS_ORGANIZATION }}
       AZURE_DEVOPS_PROJECT: ${{ vars.AZURE_DEVOPS_PROJECT }}
-
-  
+      GIT_SHA: ${{ github.sha }}
+    
     
     steps:
-    - name: Echo generated command
-      shell: bash
-      run: |
-        echo "Generated curl command:"
-        echo "curl -u :\$AZURE_DEVOPS_TOKEN \\"
-        echo "     -X POST \\"
-        echo "     -H \"Content-Type: application/json\" \\"
-        echo "     -d '{"
-        echo "           \"definition\": {"
-        echo "             \"id\": \$AZURE_DEVOPS_PIPELINE_DEFINITION_ID"
-        echo "           },"
-        echo "           \"sourceBranch\": \"refs/heads/\$AZURE_DEVOPS_SOURCE_BRANCH\""
-        echo "         }' \\"
-        echo "     https://dev.azure.com/\$AZURE_DEVOPS_ORGANIZATION/\$AZURE_DEVOPS_PROJECT/_apis/build/builds?api-version=6.0"
-
     - name: Trigger Azure Devops Pipeline
       shell: bash
       run: |
         echo "Triggering Azure DevOps pipeline..."
-        json_payload=$(jq -n --arg id "$AZURE_DEVOPS_PIPELINE_DEFINITION_ID" --arg branch "refs/heads/$AZURE_DEVOPS_SOURCE_BRANCH" '{definition: {id: $id}, sourceBranch: $branch}')
+        json_payload=$(jq -n --arg id "$AZURE_DEVOPS_PIPELINE_DEFINITION_ID" --arg pipelineSourceBranch "refs/heads/$AZURE_DEVOPS_PIPELINE_SOURCE_BRANCH" --arg branchToBuild "$GIT_SHA"\ 
+        '{definition: {id: $id}, sourceBranch: $pipelineSourceBranch}', parameters: {branchName: $branchToBuild}}')
+        echo "Payload: $json_payload"
         curl -s -u :$AZURE_DEVOPS_TOKEN \
         -X POST \
         -H "Content-Type: application/json" \
