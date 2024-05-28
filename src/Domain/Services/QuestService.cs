@@ -38,6 +38,16 @@ namespace QuestSystem.Domain.Services
             return existingQuest.Objective.Completed;
         }
 
+        
+        public bool CheckPlatformQuestCompletion(PlatformQuest platformQuest, object playerCurrentValue)
+        {
+            
+            platformQuest.Objective.CheckObjectiveCompletion(playerCurrentValue);
+
+            return platformQuest.Objective.Completed;
+        }
+
+        
 
         public List<Quest> ListActiveQuests()
         {

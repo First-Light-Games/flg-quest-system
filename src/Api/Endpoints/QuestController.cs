@@ -13,9 +13,9 @@ public class QuestController : EndpointGroupBase
     public override void Map(WebApplication app)
     {
         app.MapGroup(this)
-            .MapPost(ConfigureAndCheckQuestCompletion, "/configure-check-quest")
-            .MapPost(CheckQuestCompletion, "/check-quest")
-            .MapPost(CheckPredictableQuestCompletion, "/check-predictable-quest");
+            .MapPost(ConfigureAndCheckQuestCompletion, "/configure-quest")
+            .MapPost(CheckQuestCompletion, "/check-quest-completion")
+            .MapPost(CheckPredictableQuestCompletion, "/check-predictable-quest-completion");
     }
     
     /// <summary>
@@ -37,6 +37,7 @@ public class QuestController : EndpointGroupBase
     {
         return sender.Send(query);
     }
+    
     
     /// <summary>
     /// Handles the CheckPredictableQuestCompletionQuery by comparing snapshot and new values, and 

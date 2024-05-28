@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace QuestSystem.Application.Quests.Commands.ConfigureQuest;
+namespace QuestSystem.Application.Quests.Commands.ConfigurePlatformQuest;
 
-public class ConfigureQuestCommandValidator : AbstractValidator<ConfigureQuestEventCommand>
+public class ConfigurePlatformQuestCommandValidator : AbstractValidator<ConfigurePlatformQuestCommand>
 {
-    public ConfigureQuestCommandValidator()
+    public ConfigurePlatformQuestCommandValidator()
     {
         // RuleFor(v => v.Title)
         //     .MaximumLength(200)

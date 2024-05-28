@@ -71,25 +71,9 @@ namespace QuestSystem.Application.Quests.Queries.ConfigureAndCheckQuestCompletio
                 objective = new AmountObjective(
                     objectiveData.Description,
                     objectiveMetric,
-                    (int)(objectiveData.Goal ?? 0));
+                    objectiveData.Goal);
             }
-
-            if (requestQuest.QuestType == QuestType.TriggerEvent)
-            {
-                objective = new EventObjective(
-                    objectiveData.Description,
-                    objectiveMetric,
-                    objectiveData.Goal as string ?? string.Empty);
-            }
-        
-            if (requestQuest.QuestType == QuestType.AmountPredictable)
-            {
-                objective = new AmountPredictableObjective(
-                    objectiveData.Description,
-                    objectiveMetric,
-                    (int)(objectiveData.Goal ?? 0));
-            }
-
+            
             return objective;
         }
     }

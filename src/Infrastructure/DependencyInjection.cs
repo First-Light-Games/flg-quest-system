@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using QuestSystem.Application.Common.Interfaces;
 using QuestSystem.Infrastructure.MetricProviders.Playfab;
+using QuestSystem.Infrastructure.Security;
 using Refit;
 
 namespace QuestSystem.Infrastructure;
@@ -15,12 +16,13 @@ public static class DependencyInjection
         services.AddRefitClient<IPlayfabAPI>()
             .ConfigureHttpClient(c =>
             {
-                c.BaseAddress = new Uri("https://4C676.playfabapi.com");
-                c.DefaultRequestHeaders.Add("X-SecretKey", "P3P6DUFBR51GPDM14KZ54YCK831TAWRC53KPOHBEUNNXD18DIS");
+                c.BaseAddress = new Uri($"https://{configuration.GetValue<string>("AppSettings:Playfab:PlayfabTitleId")}.playfabapi.com");
+                c.DefaultRequestHeaders.Add("X-SecretKey", configuration.GetValue<string>("AppSettings:Playfab:PlayfabSecretKey"));
             });
         
-        //DI
         services.AddScoped<IMetricProvider, PlayfabMetricProvider>();
+        services.AddScoped<ISecureDataService, SecureDataService>();
+        
         return services;
     }
 }
