@@ -19,9 +19,11 @@ public class CustomExceptionHandler : IExceptionHandler
         _exceptionHandlers = new()
             {
                 { typeof(ValidationException), HandleValidationException },
-                { typeof(NotFoundException), HandleNotFoundException },
+                { typeof(EntityNotFoundException), HandleNotFoundException },
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
                 { typeof(ForbiddenAccessException), HandleForbiddenAccessException },
+                { typeof(ExternalServiceException), HandleIntegrationErrorException },
+                { typeof(PlatformQuestNotCompletedException), HandlePlatformQuestNotCompleted },
             };
     }
 
@@ -48,6 +50,20 @@ public class CustomExceptionHandler : IExceptionHandler
         {
             Status = StatusCodes.Status400BadRequest,
             Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+        });
+    }
+    
+    private async Task HandlePlatformQuestNotCompleted(HttpContext httpContext, Exception ex)
+    {
+        var exception = (PlatformQuestNotCompletedException)ex;
+
+        httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails()
+        {
+            Status = StatusCodes.Status400BadRequest,
+            Title = "User didn't complete the quest",
+            Detail = exception.Message
         });
     }
 
@@ -87,6 +103,24 @@ public class CustomExceptionHandler : IExceptionHandler
             Status = StatusCodes.Status403Forbidden,
             Title = "Forbidden",
             Type = "https://tools.ietf.org/html/rfc7231#section-6.5.3"
+        });
+    }
+    
+    private async Task HandleIntegrationErrorException(HttpContext httpContext, Exception ex)
+    {
+        httpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
+
+        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        {
+            Status = StatusCodes.Status502BadGateway,
+            Title = "Integration Error",
+            Detail = "There was an error communicating with the external platform. Please try again later.",
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.6.3",
+            Instance = httpContext.Request.Path,
+            Extensions = 
+            {
+                { "traceId", httpContext.TraceIdentifier }
+            }
         });
     }
 }

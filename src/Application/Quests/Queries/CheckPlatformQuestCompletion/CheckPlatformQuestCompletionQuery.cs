@@ -11,9 +11,9 @@ namespace QuestSystem.Application.Quests.Queries.CheckPlatformQuestCompletion;
 
 public class CheckPlatformQuestCompletionQuery : IRequest<QuestCompletedDTO>
 {
-    public string playerIdentifier  { get; set; } = null!;
+    public string PlayerIdentifier  { get; set; } = null!;
     
-    public string platformQuestEventKey  { get; set; } = null!;
+    public string PlatformQuestEventKey  { get; set; } = null!;
 }
 
 public class CheckQuestCompletionQueryHandler : IRequestHandler<CheckPlatformQuestCompletionQuery, QuestCompletedDTO>
@@ -32,26 +32,19 @@ public class CheckQuestCompletionQueryHandler : IRequestHandler<CheckPlatformQue
 
     public async Task<QuestCompletedDTO> Handle(CheckPlatformQuestCompletionQuery request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var platformQuest = _secureDataService.Decrypt<PlatformQuest>(request.platformQuestEventKey);
+        var platformQuest = _secureDataService.Decrypt<PlatformQuest>(request.PlatformQuestEventKey);
 
-            if (platformQuest == null)
-            {
-                throw new ArgumentException("Couldn't translate PlatformQuestEventKey");
-            }
-
-            var playerMetric = await _metricProvider.GetMetricFromUser(request.playerIdentifier, platformQuest.Objective.Metric);
-        
-            return await Task.FromResult(new QuestCompletedDTO()
-            {
-                Completed = _questService.CheckPlatformQuestCompletion(platformQuest, playerMetric!.Value ?? throw new InvalidOperationException())
-            });
-        }
-        catch (Exception e)
+        if (platformQuest == null)
         {
-            Console.WriteLine(e);
-            throw;
+            throw new UnauthorizedAccessException("Invalid Api-Key");
         }
+
+        var playerMetric = await _metricProvider.GetMetricFromUser(request.PlayerIdentifier, platformQuest.Objective.Metric);
+    
+        return await Task.FromResult(new QuestCompletedDTO()
+        {
+            Completed = _questService.CheckPlatformQuestCompletion(platformQuest, playerMetric!.Value ?? throw new InvalidOperationException())
+        });
+    
     }
 }
