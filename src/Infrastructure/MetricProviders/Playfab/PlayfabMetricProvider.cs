@@ -49,7 +49,7 @@ public class PlayfabMetricProvider : IMetricProvider
         }
         catch (ApiException apiEx)
         {
-            throw new ExternalServiceException($"API error: {apiEx.Message}");
+            throw new ExternalServiceException($"API error: {apiEx.Message} - {apiEx.Content}");
         }
         catch (Exception ex)
         {
@@ -74,14 +74,12 @@ public class PlayfabMetricProvider : IMetricProvider
             };
 
             var response = await _playfabApi.GetPlayerStatistics(postBody);
-
             if (response.Data?.Statistics == null)
             {
                 throw new EntityNotFoundException($"Statistics not found for player with email {requestEmail}");
             }
 
             var metricFound = response.Data.Statistics.Find(m => m.StatisticName != null && m.StatisticName.Equals(metricName));
-
             if (metricFound == null)
             {
                 throw new EntityNotFoundException($"Metric '{metricName}' not found for player with email {requestEmail}");
