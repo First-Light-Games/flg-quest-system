@@ -1,14 +1,12 @@
 ﻿using System;
 using QuestSystem.Domain.Common;
 using QuestSystem.Domain.Interfaces;
-using QuestSystem.Domain.ValueObjects;
 
 namespace QuestSystem.Domain.Models.Objectives
 {
     public abstract class BaseObjective<TInput, TGoal> : BaseModel, IObjective,  IObjectiveCompletionRule<TInput>
     {
         
-
         public string Description { get; set; }
     
         public string Metric { get; set; }
@@ -16,6 +14,7 @@ namespace QuestSystem.Domain.Models.Objectives
         public TGoal Goal { get; set; }
         
         private bool _completed;
+        
         public bool Completed => _completed;
         
 

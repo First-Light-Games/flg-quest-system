@@ -6,8 +6,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using QuestSystem.Api.Infrastructure;
 using QuestSystem.Application.Common.Exceptions;
-using QuestSystem.Application.Quests.Commands.ConfigurePlatformQuest;
+using QuestSystem.Application.Quests.Commands;
 using QuestSystem.Application.Quests.DTOs;
 using QuestSystem.Application.Quests.Queries.CheckPlatformQuestCompletion;
 
@@ -38,7 +39,7 @@ public class PlatformQuestController : EndpointGroupBase
     /// <response code="400">If the player metric data could not be found or is null.</response>
     /// <response code="500">If there is any server error during the process.</response>
     /// <exception cref="NullReferenceException">Thrown when the player's metric data could not be found.</exception>
-    public Task<PlatformQuestEventKeyDTO> ConfigurePlatformQuest(ISender sender, ConfigurePlatformQuestCommand command)
+    public Task<PlatformQuestEventKeyDTO> ConfigurePlatformQuest(ISender sender, ConfigurePlatformQuest.Command command)
     {
         return sender.Send(command);
     }
@@ -102,7 +103,7 @@ public class PlatformQuestController : EndpointGroupBase
                 var checkResult = await sender.Send(new CheckPlatformQuestCompletionQuery
                 {
                     PlatformQuestEventKey = apiKey.ToString(),
-                    PlayerIdentifier = "magostinhojr@gmail.com" //email.GetString() ?? throw new InvalidOperationException("Email cannot be null")
+                    PlayerIdentifier = email.GetString() ?? throw new InvalidOperationException("Email cannot be null")
                 });
 
                 if (!checkResult.Completed)

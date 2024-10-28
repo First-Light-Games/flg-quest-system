@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using QuestSystem.Application.Common.Interfaces;
+using QuestSystem.Application.Common.Interfaces.Providers;
 using QuestSystem.Application.Quests.DTOs;
 using QuestSystem.Domain.Models.Quests;
 using QuestSystem.Domain.Services;

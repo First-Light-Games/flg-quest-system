@@ -6,7 +6,91 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/QuestController/configure-check-quest": {
+    "/api/PlatformQuestController/configure-platform-quest": {
+      "post": {
+        "tags": [
+          "PlatformQuestController"
+        ],
+        "operationId": "ConfigurePlatformQuest",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Command"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformQuestEventKeyDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PlatformQuestController/check-platform-quest-completion": {
+      "post": {
+        "tags": [
+          "PlatformQuestController"
+        ],
+        "operationId": "CheckPlatformQuestCompletion",
+        "requestBody": {
+          "x-name": "query",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckPlatformQuestCompletionQuery"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestCompletedDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PlatformQuestController/check-zealy-quest-completion": {
+      "post": {
+        "tags": [
+          "PlatformQuestController"
+        ],
+        "operationId": "CheckQuestCompletionFromZealy",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestCompletedDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/QuestController/configure-quest": {
       "post": {
         "tags": [
           "QuestController"
@@ -38,7 +122,7 @@
         }
       }
     },
-    "/api/QuestController/check-quest": {
+    "/api/QuestController/check-quest-completion": {
       "post": {
         "tags": [
           "QuestController"
@@ -70,7 +154,7 @@
         }
       }
     },
-    "/api/QuestController/check-predictable-quest": {
+    "/api/QuestController/check-predictable-quest-completion": {
       "post": {
         "tags": [
           "QuestController"
@@ -101,28 +185,53 @@
           }
         }
       }
+    },
+    "/webhook/playfab": {
+      "post": {
+        "operationId": "PostWebhookPlayfab",
+        "requestBody": {
+          "x-name": "playfabPayload",
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "QuestCompletedDTO": {
+      "PlatformQuestEventKeyDTO": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "completed": {
-            "type": "boolean"
+          "platformQuestEventKey": {
+            "type": "string"
           }
         }
       },
-      "ConfigureAndCheckQuestCompletionQuery": {
+      "Command": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
           "quest": {
             "$ref": "#/components/schemas/QuestDTO"
           },
-          "playerEmail": {
-            "type": "string"
+          "platformQuestStartDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "platformQuestEndDate": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -172,7 +281,41 @@
             "type": "string"
           },
           "goal": {
-            "nullable": true
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "QuestCompletedDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "completed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CheckPlatformQuestCompletionQuery": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "playerIdentifier": {
+            "type": "string"
+          },
+          "platformQuestEventKey": {
+            "type": "string"
+          }
+        }
+      },
+      "ConfigureAndCheckQuestCompletionQuery": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "quest": {
+            "$ref": "#/components/schemas/QuestDTO"
+          },
+          "playerEmail": {
+            "type": "string"
           }
         }
       },

@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using QuestSystem.Application.Common.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace QuestSystem.Application.Common.Behaviours;

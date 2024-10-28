@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
-namespace QuestSystem.Web.Infrastructure;
+namespace QuestSystem.Api.Infrastructure;
 
 public static class IEndpointRouteBuilderExtensions
 {

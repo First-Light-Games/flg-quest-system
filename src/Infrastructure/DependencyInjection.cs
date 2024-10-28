@@ -1,9 +1,18 @@
 ﻿using System;
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using QuestSystem.Application.Common.Interfaces;
+using QuestSystem.Application.Common.Interfaces.EventStream;
+using QuestSystem.Application.Common.Interfaces.Providers;
+using QuestSystem.Application.Common.Models;
+using QuestSystem.Application.Services.QuestProviderHandler;
+using QuestSystem.Infrastructure.EventStream.EventStreamDataProcessors;
 using QuestSystem.Infrastructure.MetricProviders.Playfab;
 using QuestSystem.Infrastructure.Security;
+using QuestSystem.Infrastructure.ServiceProviders.Playfab;
+using QuestSystem.Infrastructure.ServiceProviders.Ygg;
 using Refit;
 
 namespace QuestSystem.Infrastructure;
@@ -12,7 +21,22 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        //Refit Playfab Settings
+        SetupRefitHttpClients(services, configuration);
+
+        services.AddScoped<ISecureDataService, SecureDataService>();
+        
+        //Providers are usually ThirdParty services
+        services.AddScoped<IMetricProvider, PlayfabMetricProvider>();
+        services.AddScoped<IEventStreamDataProcessor<JsonElement>, PlayfabEventStreamDataProcessor>();
+        services.AddKeyedScoped<IQuestProvider, YggQuestProvider>(typeof(YggQuestProviderHandler));
+        
+        services.AddLogging();
+        
+        return services;
+    }
+
+    private static void SetupRefitHttpClients(IServiceCollection services, IConfiguration configuration)
+    {
         services.AddRefitClient<IPlayfabAPI>()
             .ConfigureHttpClient(c =>
             {
@@ -20,10 +44,19 @@ public static class DependencyInjection
                 c.DefaultRequestHeaders.Add("X-SecretKey", configuration.GetValue<string>("AppSettings:Playfab:PlayfabSecretKey"));
             });
         
-        services.AddScoped<IMetricProvider, PlayfabMetricProvider>();
-        services.AddScoped<ISecureDataService, SecureDataService>();
-        
-        return services;
+        services.AddRefitClient<IYggAPI>()
+            .ConfigureHttpClient(c =>
+            {
+                var baseUrl = configuration.GetValue<string>("AppSettings:QuestProvider:Ygg:Endpoint");
+
+                if (baseUrl.IsNullOrEmpty())
+                {
+                    throw new ArgumentException("Error setting up QuestProvider: YGG, Invalid/Null Base Endpoint");
+                }
+
+                c.BaseAddress = new Uri(baseUrl!);
+                c.DefaultRequestHeaders.Add("API_KEY", configuration.GetValue<string>("AppSettings:QuestProvider:Ygg:ApiKey"));
+            });
     }
 }
 
