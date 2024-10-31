@@ -43,23 +43,20 @@ public class PlayfabEventStreamDataProcessor : IEventStreamDataProcessor<JsonEle
     private void ProcessEventStreamDataAndPublish(JsonElement rawData)
     {
         var entityId = rawData.GetString("EntityId");
-        var eventName = rawData.GetString("EventName"); 
-        var statisticName = rawData.GetString("StatisticName");
-        var statisticPreviousValue = rawData.GetString("StatisticPreviousValue");
-        var statisticValue = rawData.GetString("StatisticValue");
+        var eventName = rawData.GetString("StatisticName"); 
+        var eventPreviousValue = rawData.GetString("StatisticPreviousValue");
+        var eventValue = rawData.GetString("StatisticValue");
         
         if (!string.IsNullOrEmpty(entityId) &&
             !string.IsNullOrEmpty(eventName) &&
-            !string.IsNullOrEmpty(statisticName) &&
-            int.TryParse(statisticPreviousValue, out int statisticPreviousValueInt) &&
-            int.TryParse(statisticValue, out int statisticValueInt))
+            int.TryParse(eventPreviousValue, out int eventPreviousValueInt) &&
+            int.TryParse(eventValue, out int eventValueInt))
         {
             var playfabEventData = new EventStreamData(
                 entityId,
                 eventName,
-                statisticName,
-                statisticPreviousValueInt,
-                statisticValueInt
+                eventPreviousValueInt,
+                eventValueInt
             );
 
             foreach (var registeredConsumer in _streamConsumers)

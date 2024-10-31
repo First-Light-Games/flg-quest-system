@@ -19,4 +19,8 @@ public class GenericQuestEventStreamConsumer : IEventStreamConsumer<EventStreamD
         _logger.LogInformation($"Class {this.GetType().Name} has received the event {eventData}");
     }
 
+    public void ConfigureEventStreamConsumer()
+    {
+        _logger.LogInformation($"Configuring Generic EventStream Consumer");
+    }
 }

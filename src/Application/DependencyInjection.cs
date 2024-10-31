@@ -15,7 +15,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<QuestService>();
-        services.AddScoped<IEventStreamConsumer<EventStreamData>, YggQuestProviderHandler>();
+        services.AddSingleton<IEventStreamConsumer<EventStreamData>, YggQuestProviderHandler>();
         
         
         //Register BackgroundServices

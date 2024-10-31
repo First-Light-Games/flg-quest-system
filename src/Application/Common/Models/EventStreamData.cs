@@ -4,18 +4,15 @@ public class EventStreamData
 {
     public string EntityId;
     public string EventName;
-    public string? EventDescription;
     
-    public string StatisticName;
-    public int StatisticPreviousNumericValue;
-    public int StatisticNewNumericValue;
+    public int EventPreviousNumericValue;
+    public int EventNewNumericValue;
 
-    public EventStreamData(string entityId, string eventName, string statisticName, int statisticPreviousNumericValue, int statisticNewNumericValue)
+    public EventStreamData(string entityId, string eventName, int eventPreviousNumericValue, int eventNewNumericValue)
     {
         EntityId = entityId;
         EventName = eventName;
-        StatisticName = statisticName;
-        StatisticPreviousNumericValue = statisticPreviousNumericValue;
-        StatisticNewNumericValue = statisticNewNumericValue;
+        EventPreviousNumericValue = eventPreviousNumericValue;
+        EventNewNumericValue = eventNewNumericValue;
     }
 }

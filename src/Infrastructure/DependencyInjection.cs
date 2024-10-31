@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using QuestSystem.Application.Common.Interfaces;
 using QuestSystem.Application.Common.Interfaces.EventStream;
 using QuestSystem.Application.Common.Interfaces.Providers;
-using QuestSystem.Application.Common.Models;
 using QuestSystem.Application.Services.QuestProviderHandler;
 using QuestSystem.Infrastructure.EventStream.EventStreamDataProcessors;
 using QuestSystem.Infrastructure.MetricProviders.Playfab;
@@ -23,13 +22,15 @@ public static class DependencyInjection
     {
         SetupRefitHttpClients(services, configuration);
 
-        services.AddScoped<ISecureDataService, SecureDataService>();
+        services.AddSingleton<IEventStreamDataProcessor<JsonElement>, PlayfabEventStreamDataProcessor>();
         
         //Providers are usually ThirdParty services
-        services.AddScoped<IMetricProvider, PlayfabMetricProvider>();
-        services.AddScoped<IEventStreamDataProcessor<JsonElement>, PlayfabEventStreamDataProcessor>();
-        services.AddKeyedScoped<IQuestProvider, YggQuestProvider>(typeof(YggQuestProviderHandler));
+        services.AddSingleton<IMetricProvider, PlayfabMetricProvider>();
         
+        //Register Named QuestProvider using it's Handler as KeyedName
+        services.AddKeyedSingleton<IQuestProvider, YggQuestProvider>(typeof(YggQuestProviderHandler));
+        
+        services.AddScoped<ISecureDataService, SecureDataService>();
         services.AddLogging();
         
         return services;
