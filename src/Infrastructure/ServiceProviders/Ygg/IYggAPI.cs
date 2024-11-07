@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using QuestSystem.Infrastructure.ServiceProviders.Ygg.Request;
 using QuestSystem.Infrastructure.ServiceProviders.Ygg.Response;
 using Refit;
@@ -21,7 +20,7 @@ public interface IYggAPI
     [Get("/group-quests")]
     Task<YggGetQuestsResponse> GetQuests();
     
-    //API Reference: https://api-docs.yieldguild.io/docs/group-quests/GetGroupQuests
+    //API Reference: https://api-docs.yieldguild.io/docs/group-quests/GetEnrolledUser
     [Get("/group-quests/{questId}/enrolled-users/{yggUserId}")]
     Task<YggGetQuestsResponse> GetEnrolledUser(string questId, string yggUserId);
     

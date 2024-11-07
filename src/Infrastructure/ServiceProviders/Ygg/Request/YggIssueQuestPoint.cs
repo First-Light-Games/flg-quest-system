@@ -2,15 +2,15 @@
 
 public class YggIssueQuestPointRequest
 {
-    private string _userId;
-    private int _progressionValue;
+    private string _userEmail;
+    private int _questPoints;
     private string? _eventName;
     private string? _eventDescription;
 
-    public YggIssueQuestPointRequest(string userId, int progressionValue, string? eventName, string? eventDescription)
+    public YggIssueQuestPointRequest(string userEmail, int questPoints, string? eventName, string? eventDescription)
     {
-        _userId = userId;
-        _progressionValue = progressionValue;
+        _userEmail = userEmail;
+        _questPoints = questPoints;
         _eventName = eventName;
         _eventDescription = eventDescription;
     }

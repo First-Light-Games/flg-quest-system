@@ -14,4 +14,10 @@ public class UserInfo
 {
     public string? PlayFabId { get; set; }
     public string? Username { get; set; }
+    public PrivateInfo? PrivateInfo { get; set; }
+}
+
+public class PrivateInfo
+{
+    public string? Email;
 }

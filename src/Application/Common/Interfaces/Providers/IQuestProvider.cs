@@ -6,7 +6,7 @@ namespace QuestSystem.Application.Common.Interfaces.Providers;
 /// <summary>
 /// Interface for submitting quest progression data to third-party quest provider systems.
 /// </summary>
-public interface IQuestProvider
+public interface IQuestProvider<T>
 {
     /// <summary>
     /// Submits the progression value for a specified quest to the third-party provider associated with a user.
@@ -17,4 +17,8 @@ public interface IQuestProvider
     /// <param name="progressionValue">The numeric value representing the user's current progression in the quest.</param>
     /// <returns>A task representing the asynchronous operation of submitting the quest progression to the third-party system.</returns>
     Task SubmitQuestProgression(string userId, string questId, int questProgressionValue, Dictionary<string, string>? questMetadata);
+
+    Task SetupActiveQuests();
+
+    List<T> GetActiveQuests();
 }

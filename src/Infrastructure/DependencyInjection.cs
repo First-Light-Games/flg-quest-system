@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using HostInitActions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +15,7 @@ using QuestSystem.Infrastructure.EventStream.EventStreamDataProcessors;
 using QuestSystem.Infrastructure.MetricProviders.Playfab;
 using QuestSystem.Infrastructure.Security;
 using QuestSystem.Infrastructure.ServiceProviders.Playfab;
+using QuestSystem.Infrastructure.ServiceProviders.RemoteConfig;
 using QuestSystem.Infrastructure.ServiceProviders.Ygg;
 using Refit;
 
@@ -25,10 +30,14 @@ public static class DependencyInjection
         services.AddSingleton<IEventStreamDataProcessor<JsonElement>, PlayfabEventStreamDataProcessor>();
         
         //Providers are usually ThirdParty services
+        //MetricsProviders are our main DataSource from players action/statistics inside the game (i.e. KillCount at the end of the Match)
         services.AddSingleton<IMetricProvider, PlayfabMetricProvider>();
         
-        //Register Named QuestProvider using it's Handler as KeyedName
-        services.AddKeyedSingleton<IQuestProvider, YggQuestProvider>(typeof(YggQuestProviderHandler));
+        //QuestProviders are third parties QuestServices platforms, for example Ygg (Players can interact with their platform to get rewards they collected playing any game)
+        services.AddSingleton<IQuestProvider<YggQuest>, YggQuestProvider>();
+
+        services.AddAsyncServiceInitialization()
+            .AddInitActionExecutor(serviceProvider => new ResolveQuestProviderExecutor(serviceProvider));
         
         services.AddScoped<ISecureDataService, SecureDataService>();
         services.AddLogging();
@@ -58,6 +67,57 @@ public static class DependencyInjection
                 c.BaseAddress = new Uri(baseUrl!);
                 c.DefaultRequestHeaders.Add("API_KEY", configuration.GetValue<string>("AppSettings:QuestProvider:Ygg:ApiKey"));
             });
+
+        services.AddRefitClient<IRemoteConfigAPI>()
+            .ConfigureHttpClient(c =>
+            {
+                var baseUrl = configuration.GetValue<string>("AppSettings:RemoteConfig:Endpoint");
+
+                if (baseUrl.IsNullOrEmpty())
+                {
+                    throw new ArgumentException("Error setting up QuestProvider: YGG, Invalid/Null Base Endpoint");
+                }
+                
+                c.BaseAddress = new Uri(baseUrl!);
+            });
+    }
+    
+  
+}
+
+class ResolveQuestProviderExecutor(IServiceProvider serviceProvider) : IAsyncInitActionExecutor
+{
+    public Task ExecuteAsync(CancellationToken cancellationToken)
+    {
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        var questProviderTypes = assemblies
+            .SelectMany(assembly => assembly.GetTypes())
+            .Where(type => type.IsClass && !type.IsAbstract)
+            .SelectMany(type => type.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQuestProvider<>))
+                .Select(i => i))
+            .Distinct()
+            .ToList();
+
+        foreach (var providerType in questProviderTypes)
+        {
+            var providerInstance = serviceProvider.GetService(providerType);
+            
+            if (providerInstance == null)
+            {
+                continue;
+            }
+
+            var initializeMethod = providerType.GetMethod("SetupActiveQuests");
+            if (initializeMethod != null)
+            {
+                var task = (Task)initializeMethod.Invoke(providerInstance, null)!;
+                task.Wait(); 
+            }
+        }
+
+        return Task.CompletedTask;
     }
 }
 

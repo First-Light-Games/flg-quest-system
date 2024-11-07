@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using QuestSystem.Application.Common.Interfaces.EventStream;
 using QuestSystem.Application.Common.Interfaces.Providers;
@@ -14,11 +13,11 @@ public class YggQuestProviderHandler : IEventStreamConsumer<EventStreamData>
 
     private readonly ILogger<YggQuestProviderHandler> _logger;
     private readonly IConfiguration _configuration;
-    private readonly IQuestProvider _questProvider;
+    private readonly IQuestProvider<YggQuest> _questProvider;
     
-    private List<YggQuestData> _configuredQuests = new();
+    private List<YggQuest> _configuredQuests = new();
 
-    public YggQuestProviderHandler(ILogger<YggQuestProviderHandler> logger, IConfiguration configuration, [FromKeyedServices(typeof(YggQuestProviderHandler))]IQuestProvider questProvider)
+    public YggQuestProviderHandler(ILogger<YggQuestProviderHandler> logger, IConfiguration configuration, IQuestProvider<YggQuest> questProvider)
     {
         _logger = logger;
         _configuration = configuration;
@@ -32,7 +31,7 @@ public class YggQuestProviderHandler : IEventStreamConsumer<EventStreamData>
     {
         if (IsListeningToEvent(eventData.EventName))
         {
-            foreach (var quest in _configuredQuests.Where(q => q.QuestStatisticName.Equals(eventData.EventName)))
+            foreach (var quest in _configuredQuests.Where(q => q.QuestMetricName.Equals(eventData.EventName)))
             {
                 _questProvider.SubmitQuestProgression(eventData.EntityId, quest.QuestId, eventData.EventNewNumericValue, null);   
             }    
@@ -42,34 +41,28 @@ public class YggQuestProviderHandler : IEventStreamConsumer<EventStreamData>
     
     private bool IsListeningToEvent(string eventDataStatisticName)
     {
-        return _configuredQuests.Any(q => q.QuestStatisticName.Equals(eventDataStatisticName));
+        return _configuredQuests.Any(q => q.QuestMetricName.Equals(eventDataStatisticName));
     }
 
     public void ConfigureEventStreamConsumer()
     {
-        // YGG has a WIP endpoint that lists all quests for a specific campaign. 
-        // In the future, this can be used not only to retrieve all quests but also to preconfigure 
-        // which quest objectives (statistics) this handler should manage.
-        List<YggQuestData>? yggQuestDatas = _configuration.GetSection("AppSettings:QuestProvider:Ygg:quests").Get<List<YggQuestData>>();
-
-        if (yggQuestDatas != null)
-        {
-            _configuredQuests = yggQuestDatas;
-        }
+        _configuredQuests = _questProvider.GetActiveQuests();
     }
     
 }
 
-internal record YggQuestData
+public record YggQuest
 {
     public string QuestId { get; init; }
     public string QuestName { get; init; }
-    public string QuestStatisticName { get; init; }
-
-    public YggQuestData(string questId, string questName, string questStatisticName)
+    public string QuestMetricName { get; init; }
+    public int QuestPoints { get; set; }
+    
+    public YggQuest(string questId, string questName, string questMetricName, int questPoints)
     {
         QuestId = questId;
         QuestName = questName;
-        QuestStatisticName = questStatisticName;
+        QuestMetricName = questMetricName;
+        QuestPoints = questPoints;
     }
 }
