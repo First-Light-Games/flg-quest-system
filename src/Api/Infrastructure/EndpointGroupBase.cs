@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace QuestSystem.Web.Infrastructure;
+namespace QuestSystem.Api.Infrastructure;
 
 public abstract class EndpointGroupBase
 {

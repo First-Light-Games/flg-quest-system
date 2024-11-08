@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using QuestSystem.Api.Infrastructure;
 using QuestSystem.Application.Quests.DTOs;
 using QuestSystem.Application.Quests.Queries.CheckPredictableQuestCompletion;
 using QuestSystem.Application.Quests.Queries.CheckQuestCompletion;

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace QuestSystem.Web.Infrastructure;
+namespace QuestSystem.Api.Infrastructure;
 
 public static class MethodInfoExtensions
 {

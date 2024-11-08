@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using QuestSystem.Api.Infrastructure;
 
 namespace QuestSystem.Web.Infrastructure;
 

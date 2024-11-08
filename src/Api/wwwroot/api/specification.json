@@ -17,7 +17,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConfigurePlatformQuestCommand"
+                "$ref": "#/components/schemas/Command"
               }
             }
           },
@@ -185,6 +185,26 @@
           }
         }
       }
+    },
+    "/webhook/playfab": {
+      "post": {
+        "operationId": "PostWebhookPlayfab",
+        "requestBody": {
+          "x-name": "playfabPayload",
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
@@ -198,7 +218,7 @@
           }
         }
       },
-      "ConfigurePlatformQuestCommand": {
+      "Command": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
