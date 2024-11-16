@@ -75,7 +75,7 @@ public static class DependencyInjection
 
                 if (baseUrl.IsNullOrEmpty())
                 {
-                    throw new ArgumentException("Error setting up QuestProvider: YGG, Invalid/Null Base Endpoint");
+                    throw new ArgumentException("Error setting up QuestProvider: RemoteConfig, Invalid/Null Base Endpoint");
                 }
                 
                 c.BaseAddress = new Uri(baseUrl!);

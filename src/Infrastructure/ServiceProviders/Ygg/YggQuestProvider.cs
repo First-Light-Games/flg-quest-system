@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using QuestSystem.Application.Common.Interfaces.Providers;
@@ -10,6 +11,7 @@ using QuestSystem.Application.Services.QuestProviderHandler;
 using QuestSystem.Infrastructure.ServiceProviders.Playfab;
 using QuestSystem.Infrastructure.ServiceProviders.RemoteConfig;
 using QuestSystem.Infrastructure.ServiceProviders.Ygg.Request;
+using Refit;
 
 namespace QuestSystem.Infrastructure.ServiceProviders.Ygg;
 
@@ -39,21 +41,51 @@ public class YggQuestProvider : IQuestProvider<YggQuest>
         {
             { "PlayFabId", userId }
         });
-
+        
         if (!string.IsNullOrEmpty(userAccountInfo.Data?.UserInfo?.PrivateInfo?.Email))
         {
             var email = userAccountInfo.Data.UserInfo.PrivateInfo.Email;
 
-            var issueQuestPoints = await _yggAPI.IssueQuestPoints(
-                questId,
-                new YggIssueQuestPointRequest(
-                    email, 
-                    progressionValue,
-                    questMetadata?.GetValueOrDefault("eventDescription"),
-                    questMetadata?.GetValueOrDefault("eventDescription")
-                )
-            );
-            
+            try
+            {
+                var identifyUser = await _yggAPI.IdentifyUser(new YggIdentifyUserRequest(email));
+
+                if (!identifyUser.Success)
+                {
+                    throw new OperationException($"Something went wrong when requesting Ygg IdentifyUser Endpoint, \n" +
+                                                 $"the request has return 200 but success property has returned false \n" +
+                                                 $"Error Message {identifyUser.Message}");
+                }
+
+                var issueQuestPoints = await _yggAPI.IssueQuestPoints(
+                    questId,
+                    new YggIssueQuestPointRequest(
+                        identifyUser.Data.YggUserId,
+                        progressionValue,
+                        questMetadata?.GetValueOrDefault("eventName"),
+                        questMetadata?.GetValueOrDefault("eventDescription")
+                    )
+                );
+
+                if (!issueQuestPoints.Success)
+                {
+                    throw new OperationException(
+                        $"Something went wrong when requesting Ygg IssueQuestEndpoint Endpoint, \n" +
+                        $"the request has return 200 but success property has returned false \n" +
+                        $"Error Message {issueQuestPoints.Message}");
+                }
+            }
+            catch (ApiException e)
+            {
+                _logger.LogError($"Something went wrong calling YGG APIs: \n " +
+                                 $"Endpoint: {e.Uri?.AbsoluteUri} \n " +
+                                 $"Error Message: {e.Content}");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+            }
+
         }
     }
 
