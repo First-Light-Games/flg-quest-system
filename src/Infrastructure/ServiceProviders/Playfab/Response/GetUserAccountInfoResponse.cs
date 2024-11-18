@@ -19,5 +19,5 @@ public class UserInfo
 
 public class PrivateInfo
 {
-    public string? Email;
+    public string? Email { get; set; }
 }

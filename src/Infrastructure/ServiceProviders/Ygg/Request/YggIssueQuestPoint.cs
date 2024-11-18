@@ -1,17 +1,24 @@
-﻿namespace QuestSystem.Infrastructure.ServiceProviders.Ygg.Request;
+﻿using Newtonsoft.Json;
+using Refit;
+
+namespace QuestSystem.Infrastructure.ServiceProviders.Ygg.Request;
 
 public class YggIssueQuestPointRequest
 {
-    private string _userEmail;
-    private int _questPoints;
-    private string? _eventName;
-    private string? _eventDescription;
-
-    public YggIssueQuestPointRequest(string userEmail, int questPoints, string? eventName, string? eventDescription)
+    
+    public string? YggUserId { get; set; }
+    
+    public int EventPoints { get; set; }
+    
+    public string? EventName { get; set; }
+    
+    public string? EventDescription { get; set; }
+    
+    public YggIssueQuestPointRequest(string? yggUserId, int eventPoints, string? eventName, string? eventDescription)
     {
-        _userEmail = userEmail;
-        _questPoints = questPoints;
-        _eventName = eventName;
-        _eventDescription = eventDescription;
+        YggUserId = yggUserId;
+        EventPoints = eventPoints;
+        EventName = eventName;
+        EventDescription = eventDescription;
     }
 }

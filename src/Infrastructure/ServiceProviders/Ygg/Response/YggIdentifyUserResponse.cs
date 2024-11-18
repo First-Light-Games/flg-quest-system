@@ -1,4 +1,6 @@
-﻿namespace QuestSystem.Infrastructure.ServiceProviders.Ygg.Response;
+﻿using Newtonsoft.Json;
+
+namespace QuestSystem.Infrastructure.ServiceProviders.Ygg.Response;
 
 public class YggIdentifyUserResponse : YggBaseResponse
 {
@@ -7,5 +9,5 @@ public class YggIdentifyUserResponse : YggBaseResponse
 
 public class YggUserData
 {
-    public string? yggUserId { get; set; } = null!;
+    public string? YggUserId { get; set; }
 }

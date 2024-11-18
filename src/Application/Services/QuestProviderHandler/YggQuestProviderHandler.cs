@@ -33,7 +33,10 @@ public class YggQuestProviderHandler : IEventStreamConsumer<EventStreamData>
         {
             foreach (var quest in _configuredQuests.Where(q => q.QuestMetricName.Equals(eventData.EventName)))
             {
-                _questProvider.SubmitQuestProgression(eventData.EntityId, quest.QuestId, eventData.EventNewNumericValue, null);   
+                _questProvider.SubmitQuestProgression(eventData.EntityId, quest.QuestId, quest.QuestPoints, new Dictionary<string, string>()
+                {
+                    {"eventName", quest.QuestName}
+                });   
             }    
         }
     }
