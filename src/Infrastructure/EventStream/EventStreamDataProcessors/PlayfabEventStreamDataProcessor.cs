@@ -33,7 +33,7 @@ public class PlayfabEventStreamDataProcessor : IEventStreamDataProcessor<JsonEle
         {
             foreach (var ev in eventData.EnumerateArray())
             {
-                ProcessEventStreamDataAndPublish(eventData);
+                ProcessEventStreamDataAndPublish(ev);
             }
         }
 
